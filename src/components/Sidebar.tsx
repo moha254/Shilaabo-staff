@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Car, Users, Calendar, BarChart3, Settings, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -7,6 +7,7 @@ const Sidebar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout, currentUser } = useAuth();
+  const [isCollapsed, setIsCollapsed] = useState(false);
   
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -15,6 +16,10 @@ const Sidebar: React.FC = () => {
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
   };
 
   const navItems = [
@@ -26,12 +31,15 @@ const Sidebar: React.FC = () => {
   ];
 
   return (
-    <div className="h-screen bg-gray-900 text-white w-64 flex flex-col">
-      <div className="p-5 border-b border-gray-800">
+    <div className={`h-screen bg-gray-900 text-white w-${isCollapsed ? '20' : '64'} flex flex-col`}>
+      <div className="p-5 border-b border-gray-800 flex justify-between items-center">
         <div className="flex items-center space-x-3">
           <Car size={28} className="text-blue-400" />
-          <h1 className="text-xl font-bold">Shilaabo Tours And Car Hire</h1>
+          {!isCollapsed && <h1 className="text-xl font-bold">Shilaabo Tours And Car Hire</h1>}
         </div>
+        <button onClick={toggleSidebar} className="text-white">
+          {isCollapsed ? 'Expand' : 'Collapse'}
+        </button>
       </div>
       
       <div className="p-4 border-b border-gray-800">
@@ -59,7 +67,7 @@ const Sidebar: React.FC = () => {
               }`}
             >
               <span className="mr-3">{item.icon}</span>
-              <span>{item.label}</span>
+              {!isCollapsed && <span>{item.label}</span>}
             </Link>
           ))}
         </nav>
@@ -71,7 +79,7 @@ const Sidebar: React.FC = () => {
           className="flex items-center px-4 py-3 text-sm text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white w-full"
         >
           <LogOut size={20} className="mr-3" />
-          <span>Logout</span>
+          {!isCollapsed && <span>Logout</span>}
         </button>
       </div>
     </div>
